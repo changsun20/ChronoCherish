@@ -13,7 +13,6 @@ type Milestone =
       Description: string }
 
 type ViewMode =
-    | HomeMode
     | ListViewMode
     | AddMilestoneMode
     | EditMilestoneMode
@@ -31,6 +30,7 @@ type Model =
 type Msg =
     | AddMilestone
     | SetMilestoneName of string
+    | SetMilestoneDate of DateTime
     | SetMilestoneDescription of string
     | SaveAddMilestone
     | CancelAddMilestone
@@ -55,11 +55,13 @@ module App =
         | AddMilestone ->
             { model with
                 CurrentView = AddMilestoneMode
+                CurrentMilestoneId = Some model.NextId
                 TypeInMilestoneName = ""
                 SelectMilestoneDate = DateTime.Now
                 TypeInMilestoneDescription = "" },
             Cmd.none
         | SetMilestoneName name -> { model with TypeInMilestoneName = name }, Cmd.none
+        | SetMilestoneDate date -> { model with SelectMilestoneDate = date }, Cmd.none
         | SetMilestoneDescription description -> { model with TypeInMilestoneDescription = description }, Cmd.none
         | SaveAddMilestone ->
             let newMilestone =
@@ -70,7 +72,8 @@ module App =
             { model with
                 Milestones = Map.add model.NextId newMilestone model.Milestones
                 NextId = model.NextId + 1
-                CurrentView = ListViewMode },
+                CurrentView = ListViewMode
+                CurrentMilestoneId = None },
             Cmd.none
         | CancelAddMilestone ->
             { model with
@@ -109,16 +112,30 @@ module App =
             Cmd.none
 
 
-    let editPage (model: Model) (submitMsg: Msg) =
+    let calendarDatePickerTemplate model =
+        CalendarDatePicker(
+            Some model.SelectMilestoneDate,
+            fun date ->
+                match date with
+                | Some d -> SetMilestoneDate d
+                | None -> SetMilestoneDate DateTime.Now // Should not happen, but safe fallback
+        )
+
+    let editPageTemplate (model: Model) (submitMsg: Msg) =
         VStack(spacing = 10) {
-            TextBlock($"Add a New Milestone #{model.NextId}")
+            TextBlock($"Add a New Milestone #{model.CurrentMilestoneId |> Option.defaultValue 0}")
 
             HStack() {
                 TextBlock("Name:  ")
                 TextBox(model.TypeInMilestoneName, SetMilestoneName)
             }
 
-            TextBlock($"Date: {model.SelectMilestoneDate.ToShortDateString()}")
+
+            HStack() {
+                TextBlock($"Date: ")
+                calendarDatePickerTemplate model
+            }
+
 
             HStack() {
                 TextBlock("Description:  ")
@@ -131,35 +148,38 @@ module App =
             }
         }
 
+    let listBoxTemplate model =
+        let sortedMilestones =
+            model.Milestones
+            |> Map.toList
+            |> List.sortByDescending (fun (_, milestone) -> milestone.Date)
+
+        ListBox(
+            sortedMilestones,
+            fun (id, milestone) ->
+                VStack(spacing = 5) {
+                    TextBlock($"Milestone ID %i{id}: %s{milestone.Name}")
+                    TextBlock($"Date: {milestone.Date.ToShortDateString()}")
+                    TextBlock($"Description: {milestone.Description}")
+
+                    HStack() {
+                        Button("Edit", EditMilestone(id, milestone))
+                        Button("Delete", DeleteMilestone id)
+                    }
+                }
+        )
+
     let view model =
         Border(
             match model.CurrentView with
-            | HomeMode -> VStack() { TextBlock("Welcome to ChronoCherish!") }
             | ListViewMode ->
                 VStack(spacing = 10) {
-                    ListBox(
-                        model.Milestones,
-                        fun item ->
-                            VStack() {
-                                TextBlock($"Milestone ID %i{item.Key}: %s{item.Value.Name}")
-
-                                TextBlock($"Date: {item.Value.Date.ToShortDateString()}")
-
-                                TextBlock($"Description: {item.Value.Description}")
-
-                                HStack() {
-
-
-                                    Button("Edit", EditMilestone(item.Key, item.Value))
-                                    Button("Delete", DeleteMilestone item.Key)
-                                }
-                            }
-                    )
+                    listBoxTemplate model
 
                     Button("Add Entry", AddMilestone)
                 }
-            | AddMilestoneMode -> editPage model SaveAddMilestone
-            | EditMilestoneMode -> editPage model UpdateMilestone
+            | AddMilestoneMode -> editPageTemplate model SaveAddMilestone
+            | EditMilestoneMode -> editPageTemplate model UpdateMilestone
 
         )
             .padding (200, 50, 200, 50)
