@@ -18,4 +18,5 @@ module Program =
 
     [<EntryPoint; STAThread>]
     let main argv =
-        buildAvaloniaApp().StartWithClassicDesktopLifetime(argv)
+        buildAvaloniaApp()
+            .StartWithClassicDesktopLifetime(argv)
