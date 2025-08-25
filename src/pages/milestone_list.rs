@@ -1,4 +1,5 @@
 use crate::models::AppState;
+use crate::persist::json_state::save_app_state;
 use crate::routes::Route;
 use dioxus::prelude::*;
 
@@ -26,6 +27,7 @@ pub fn MilestoneList() -> Element {
                                 let milestone_id = milestone.id;
                                 move |_| {
                                     milestones_mut.write().retain(|m| m.id != milestone_id);
+                                    save_app_state(&app_state);
                                 }
                             },
                             "Delete"

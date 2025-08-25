@@ -1,4 +1,5 @@
 use crate::models::{AppState, Milestone};
+use crate::persist::save_app_state;
 use crate::routes::Route;
 use chrono::Utc;
 use dioxus::prelude::*;
@@ -29,6 +30,8 @@ pub fn NewMilestone() -> Element {
 
                 next_id.set(next_id() + 1);
                 milestones.write().push(new_milestone);
+
+                save_app_state(&app_state);
 
                 navigator.push(Route::MilestoneList {});
             },

@@ -1,11 +1,14 @@
 use crate::models::{AppState, Milestone};
+use crate::persist::json_state::save_app_state;
 use crate::routes::Route;
 use dioxus::prelude::*;
 
 #[component]
 pub fn EditMilestone(id: u32) -> Element {
     let navigator = navigator();
-    let milestones = use_context::<AppState>().milestones;
+
+    let app_state = use_context::<AppState>();
+    let milestones = app_state.milestones;
 
     let milestone_opt = milestones.read().iter().find(|m| m.id == id).cloned();
 
@@ -28,6 +31,8 @@ pub fn EditMilestone(id: u32) -> Element {
                     if let Some(milestone) = milestones_mut.write().iter_mut().find(|m| m.id == id) {
                         *milestone = new_milestone;
                     }
+
+                    save_app_state(&app_state);
 
                     navigator.push(Route::MilestoneList {});
                 },

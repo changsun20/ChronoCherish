@@ -1,10 +1,11 @@
 use dioxus::prelude::*;
-use models::{AppState, Milestone};
+use models::AppState;
 use routes::Route;
 
 mod components;
 mod models;
 mod pages;
+mod persist;
 mod routes;
 
 const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
@@ -15,12 +16,14 @@ fn main() {
 
 #[component]
 fn App() -> Element {
-    let milestones = use_signal(|| Vec::<Milestone>::new());
-    let next_id = use_signal(|| 1u32);
+    let (milestones, next_id) = persist::load_app_state();
+
+    let milestones_signal = use_signal(|| milestones);
+    let next_id_signal = use_signal(|| next_id);
 
     use_context_provider(|| AppState {
-        milestones,
-        next_id,
+        milestones: milestones_signal,
+        next_id: next_id_signal,
     });
 
     rsx! {

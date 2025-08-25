@@ -11,6 +11,7 @@ serde = { version = "1.0.219", features = ["derive"] }
 chrono = { version = "0.4.41", features = ["serde"] }
 dioxus = { version = "0.6.3", features = ["router"] }
 serde_json = "1.0.143"
+tokio = { version = "1.47.1", features = ["fs"] }
 
 [features]
 default = ["desktop"]
