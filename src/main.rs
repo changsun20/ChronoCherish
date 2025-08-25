@@ -1,4 +1,6 @@
-use dioxus::prelude::*;
+use chrono::{DateTime, Utc};
+use dioxus::{html::mi, prelude::*};
+use serde::{de, Deserialize, Serialize};
 
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
@@ -6,14 +8,32 @@ enum Route {
     #[layout(Navbar)]
     #[route("/")]
     Home {},
-    #[route("/blog/:id")]
-    Blog { id: i32 },
+
+    #[route("/new-milestone")]
+    NewMilestone {},
+
+    #[route("/milestone-list")]
+    MilestoneList {},
+
+    #[route("/milestone/:id")]
+    EditMilestone { id: u32 },
 }
 
-const FAVICON: Asset = asset!("/assets/favicon.ico");
-const MAIN_CSS: Asset = asset!("/assets/main.css");
-const HEADER_SVG: Asset = asset!("/assets/header.svg");
 const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct Milestone {
+    id: u32,
+    title: String,
+    description: String,
+    date_time: DateTime<Utc>,
+}
+
+#[derive(Clone, Copy)]
+struct AppState {
+    milestones: Signal<Vec<Milestone>>,
+    next_id: Signal<u32>,
+}
 
 fn main() {
     dioxus::launch(App);
@@ -21,62 +41,17 @@ fn main() {
 
 #[component]
 fn App() -> Element {
+    let milestones = use_signal(|| Vec::<Milestone>::new());
+    let next_id = use_signal(|| 1u32);
+
+    use_context_provider(|| AppState {
+        milestones,
+        next_id,
+    });
+
     rsx! {
-        document::Link { rel: "icon", href: FAVICON }
-        document::Link { rel: "stylesheet", href: MAIN_CSS } document::Link { rel: "stylesheet", href: TAILWIND_CSS }
+        document::Link { rel: "stylesheet", href: TAILWIND_CSS }
         Router::<Route> {}
-    }
-}
-
-#[component]
-pub fn Hero() -> Element {
-    rsx! {
-        div {
-            id: "hero",
-            img { src: HEADER_SVG, id: "header" }
-            div { id: "links",
-                a { href: "https://dioxuslabs.com/learn/0.6/", "📚 Learn Dioxus" }
-                a { href: "https://dioxuslabs.com/awesome", "🚀 Awesome Dioxus" }
-                a { href: "https://github.com/dioxus-community/", "📡 Community Libraries" }
-                a { href: "https://github.com/DioxusLabs/sdk", "⚙️ Dioxus Development Kit" }
-                a { href: "https://marketplace.visualstudio.com/items?itemName=DioxusLabs.dioxus", "💫 VSCode Extension" }
-                a { href: "https://discord.gg/XgGxMSkvUM", "👋 Community Discord" }
-            }
-        }
-    }
-}
-
-/// Home page
-#[component]
-fn Home() -> Element {
-    rsx! {
-        Hero {}
-
-    }
-}
-
-/// Blog page
-#[component]
-pub fn Blog(id: i32) -> Element {
-    rsx! {
-        div {
-            id: "blog",
-
-            // Content
-            h1 { "This is blog #{id}!" }
-            p { "In blog #{id}, we show how the Dioxus router works and how URL parameters can be passed as props to our route components." }
-
-            // Navigation links
-            Link {
-                to: Route::Blog { id: id - 1 },
-                "Previous"
-            }
-            span { " <---> " }
-            Link {
-                to: Route::Blog { id: id + 1 },
-                "Next"
-            }
-        }
     }
 }
 
@@ -85,17 +60,114 @@ pub fn Blog(id: i32) -> Element {
 fn Navbar() -> Element {
     rsx! {
         div {
-            id: "navbar",
             Link {
                 to: Route::Home {},
                 "Home"
             }
+        }
+
+        div {
             Link {
-                to: Route::Blog { id: 1 },
-                "Blog"
+                to: Route::NewMilestone {},
+                "New Milestone"
+            }
+        }
+
+        div {
+            Link {
+                to: Route::MilestoneList {},
+                "Milestone List"
             }
         }
 
         Outlet::<Route> {}
+    }
+}
+
+/// Home page
+#[component]
+fn Home() -> Element {
+    rsx! {
+        CountDown {}
+    }
+}
+
+#[component]
+pub fn CountDown() -> Element {
+    rsx! {
+        div {
+            p { "Countdown Timer" }
+        }
+    }
+}
+
+#[component]
+fn NewMilestone() -> Element {
+    let navigator = navigator();
+
+    let mut next_id = use_context::<AppState>().next_id;
+    let mut milestones = use_context::<AppState>().milestones;
+
+    let mut title_field = use_signal(|| "".to_string());
+    let mut description_field = use_signal(|| "".to_string());
+    let mut date_time_field = use_signal(|| Utc::now());
+
+    rsx! {
+        form {
+            onsubmit: move |_| {
+                date_time_field.set(Utc::now());
+                let new_milestone = Milestone {
+                    id: next_id(),
+                    title: title_field(),
+                    description: description_field(),
+                    date_time: date_time_field()
+                };
+                next_id += 1;
+                milestones.write().push(new_milestone);
+
+                title_field.set("".into());
+                description_field.set("".into());
+                date_time_field.set(Utc::now());
+
+                navigator.push(Route::MilestoneList {});
+            },
+            input {
+                value: "{title_field}",
+                oninput: move |e| title_field.set(e.value()),
+            }
+            input {
+                value: "{description_field}",
+                oninput: move |e| description_field.set(e.value()),
+            }
+            input { r#type: "submit" }
+        }
+    }
+}
+
+#[component]
+fn MilestoneList() -> Element {
+    let milestones = use_context::<AppState>().milestones;
+    let milestones_lock = milestones.read();
+
+    rsx! {
+        div {
+            h1 { "Milestone List" }
+        }
+        div {
+            ul {
+                for milestone in milestones_lock.iter() {
+                    li { "{milestone.id} - {milestone.title} - {milestone.description} - {milestone.date_time}" }
+                }
+            }
+        }
+    }
+}
+
+#[component]
+fn EditMilestone(id: u32) -> Element {
+    rsx! {
+        div {
+            h1 { "Edit Milestone" }
+        }
     }
 }
