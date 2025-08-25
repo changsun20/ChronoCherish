@@ -5,12 +5,9 @@ use dioxus::prelude::*;
 #[component]
 pub fn EditMilestone(id: u32) -> Element {
     let navigator = navigator();
-    let mut milestones = use_context::<AppState>().milestones;
+    let milestones = use_context::<AppState>().milestones;
 
-    let milestone_opt = {
-        let milestone_ref = milestones.read();
-        milestone_ref.iter().find(|m| m.id == id).cloned()
-    };
+    let milestone_opt = milestones.read().iter().find(|m| m.id == id).cloned();
 
     if let Some(milestone) = milestone_opt {
         let mut title_field = use_signal(|| milestone.title.clone());
@@ -27,8 +24,8 @@ pub fn EditMilestone(id: u32) -> Element {
                         date_time: date_time_field()
                     };
 
-                    let mut milestone_mut_ref = milestones.write();
-                    if let Some(milestone) = milestone_mut_ref.iter_mut().find(|m| m.id == id) {
+                    let mut milestones_mut = milestones;
+                    if let Some(milestone) = milestones_mut.write().iter_mut().find(|m| m.id == id) {
                         *milestone = new_milestone;
                     }
 
