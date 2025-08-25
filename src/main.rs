@@ -105,8 +105,9 @@ pub fn CountDown() -> Element {
 fn NewMilestone() -> Element {
     let navigator = navigator();
 
-    let mut next_id = use_context::<AppState>().next_id;
-    let mut milestones = use_context::<AppState>().milestones;
+    let app_state = use_context::<AppState>();
+    let mut milestones = app_state.milestones;
+    let mut next_id = app_state.next_id;
 
     let mut title_field = use_signal(|| "".to_string());
     let mut description_field = use_signal(|| "".to_string());
@@ -116,18 +117,16 @@ fn NewMilestone() -> Element {
         form {
             onsubmit: move |_| {
                 date_time_field.set(Utc::now());
+
                 let new_milestone = Milestone {
                     id: next_id(),
                     title: title_field(),
                     description: description_field(),
                     date_time: date_time_field()
                 };
-                next_id += 1;
-                milestones.write().push(new_milestone);
 
-                title_field.set("".into());
-                description_field.set("".into());
-                date_time_field.set(Utc::now());
+                next_id.set(next_id() + 1);
+                milestones.write().push(new_milestone);
 
                 navigator.push(Route::MilestoneList {});
             },
@@ -147,7 +146,7 @@ fn NewMilestone() -> Element {
 #[component]
 fn MilestoneList() -> Element {
     let milestones = use_context::<AppState>().milestones;
-    let milestones_lock = milestones.read();
+    let milestones_ref = milestones.read();
 
     rsx! {
         div {
@@ -155,8 +154,12 @@ fn MilestoneList() -> Element {
         }
         div {
             ul {
-                for milestone in milestones_lock.iter() {
+                for milestone in milestones_ref.iter() {
                     li { "{milestone.id} - {milestone.title} - {milestone.description} - {milestone.date_time}" }
+                    Link {
+                        to: Route::EditMilestone { id: milestone.id },
+                        "Edit"
+                    }
                 }
             }
         }
@@ -165,9 +168,52 @@ fn MilestoneList() -> Element {
 
 #[component]
 fn EditMilestone(id: u32) -> Element {
-    rsx! {
-        div {
-            h1 { "Edit Milestone" }
-        }
+    let navigator = navigator();
+    let mut milestones = use_context::<AppState>().milestones;
+
+    let milestone_opt = {
+        let milestone_ref = milestones.read();
+        milestone_ref.iter().find(|m| m.id == id).cloned()
+    };
+
+    if let Some(milestone) = milestone_opt {
+        let mut title_field = use_signal(|| milestone.title.clone());
+        let mut description_field = use_signal(|| milestone.description.clone());
+        let date_time_field = use_signal(|| milestone.date_time.clone());
+
+        rsx!(
+            form {
+                onsubmit: move |_| {
+                    let new_milestone = Milestone {
+                        id: milestone.id,
+                        title: title_field(),
+                        description: description_field(),
+                        date_time: date_time_field()
+                    };
+
+                    let mut milestone_mut_ref = milestones.write();
+                    if let Some(milestone) = milestone_mut_ref.iter_mut().find(|m| m.id == id) {
+                        *milestone = new_milestone;
+                    }
+
+                    navigator.push(Route::MilestoneList {});
+                },
+                input {
+                    value: "{title_field}",
+                    oninput: move |e| title_field.set(e.value()),
+                }
+                input {
+                    value: "{description_field}",
+                    oninput: move |e| description_field.set(e.value()),
+                }
+                input { r#type: "submit" }
+            }
+        )
+    } else {
+        rsx!(
+            div {
+                h1 { "Milestone Not Found" }
+            }
+        )
     }
 }
