@@ -1,7 +1,7 @@
+use crate::components::calendar::CalendarDatePicker;
 use crate::models::{AppState, Milestone};
 use crate::persist::save_app_state;
 use crate::routes::Route;
-use chrono::Utc;
 use dioxus::prelude::*;
 
 #[component]
@@ -14,36 +14,70 @@ pub fn NewMilestone() -> Element {
 
     let mut title_field = use_signal(|| "".to_string());
     let mut description_field = use_signal(|| "".to_string());
-    let mut date_time_field = use_signal(|| Utc::now());
+
+    let mut date_field = use_signal(|| Some(time::UtcDateTime::now().date()));
+    let mut show_calendar = use_signal(|| false);
 
     rsx! {
+        h2 { "Create New Milestone" }
+
         form {
             onsubmit: move |_| {
-                date_time_field.set(Utc::now());
+                if let Some(selected_date) = date_field() {
+                    let new_milestone = Milestone {
+                        id: next_id(),
+                        title: title_field(),
+                        description: description_field(),
+                        date: selected_date
+                    };
 
-                let new_milestone = Milestone {
-                    id: next_id(),
-                    title: title_field(),
-                    description: description_field(),
-                    date_time: date_time_field()
-                };
+                    next_id.set(next_id() + 1);
+                    milestones.write().push(new_milestone);
 
-                next_id.set(next_id() + 1);
-                milestones.write().push(new_milestone);
+                    save_app_state(&app_state);
 
-                save_app_state(&app_state);
-
-                navigator.push(Route::MilestoneList {});
+                    navigator.push(Route::MilestoneList {});
+                }
             },
+
+            label { "Title:" }
             input {
                 value: "{title_field}",
                 oninput: move |e| title_field.set(e.value()),
+                placeholder: "Enter milestone title"
             }
+
+            label { "Description:" }
             input {
                 value: "{description_field}",
                 oninput: move |e| description_field.set(e.value()),
+                placeholder: "Enter milestone description"
             }
-            input { r#type: "submit" }
+
+            label { "Date:" }
+            p {
+                "Selected date: {date_field().map(|d| d.to_string()).unwrap_or_else(|| \"Not selected\".to_string())}"
+            }
+            button {
+                r#type: "button",
+                onclick: move |_| show_calendar.set(!show_calendar()),
+                if show_calendar() { "Hide Calendar" } else { "Select Date" }
+            }
+
+            if show_calendar() {
+                CalendarDatePicker {
+                    selected_date: date_field,
+                    on_date_change: move |date| {
+                        date_field.set(date);
+                        show_calendar.set(false);
+                    }
+                }
+            }
+
+            input {
+                r#type: "submit",
+                value: "Create Milestone"
+            }
         }
     }
 }

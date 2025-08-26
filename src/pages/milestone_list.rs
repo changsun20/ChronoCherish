@@ -16,7 +16,7 @@ pub fn MilestoneList() -> Element {
             ul {
                 for milestone in milestones.read().iter() {
                     li {
-                        div { "{milestone.id} - {milestone.title} - {milestone.description} - {milestone.date_time}" }
+                        div { "{milestone.id} - {milestone.title} - {milestone.description} - {milestone.date}" }
                         Link {
                             to: Route::EditMilestone { id: milestone.id },
                             "Edit"

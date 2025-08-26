@@ -2,6 +2,8 @@ use dioxus::prelude::*;
 use models::AppState;
 use routes::Route;
 
+use crate::models::AppStateData;
+
 mod components;
 mod models;
 mod pages;
@@ -16,15 +18,16 @@ fn main() {
 
 #[component]
 fn App() -> Element {
-    let (milestones, next_id) = persist::load_app_state();
+    let data = persist::load_app_state();
 
-    let milestones_signal = use_signal(|| milestones);
-    let next_id_signal = use_signal(|| next_id);
+    let app_state_data = AppStateData {
+        milestones: data.0,
+        next_id: data.1,
+    };
 
-    use_context_provider(|| AppState {
-        milestones: milestones_signal,
-        next_id: next_id_signal,
-    });
+    let app_state = AppState::from_data(app_state_data);
+
+    use_context_provider(|| app_state);
 
     rsx! {
         document::Link { rel: "stylesheet", href: TAILWIND_CSS }
