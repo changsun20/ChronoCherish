@@ -9,6 +9,8 @@ edition = "2021"
 [dependencies]
 serde = { version = "1.0.219", features = ["derive"] }
 dioxus = { version = "0.6.3", features = ["router"] }
+dioxus-i18n = "0.4.3"
+unic-langid = "0.9.1"
 serde_json = "1.0.143"
 time = { version = "0.3.41", features = [
     "serde",

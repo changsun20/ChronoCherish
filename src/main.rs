@@ -1,6 +1,8 @@
 use dioxus::prelude::*;
+use dioxus_i18n::prelude::*;
 use models::AppState;
 use routes::Route;
+use unic_langid::langid;
 
 use crate::models::AppStateData;
 
@@ -19,6 +21,12 @@ fn main() {
 
 #[component]
 fn App() -> Element {
+    use_init_i18n(|| {
+        I18nConfig::new(langid!("en-US"))
+            .with_locale((langid!("en-US"), include_str!("../assets/i18n/en-US.ftl")))
+            .with_locale((langid!("zh-CN"), include_str!("../assets/i18n/zh-CN.ftl")))
+    });
+
     let data = persist::load_app_state();
 
     let app_state_data = AppStateData {

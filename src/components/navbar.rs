@@ -1,5 +1,7 @@
+use crate::components::language_selector::LanguageSelector;
 use crate::routes::Route;
 use dioxus::prelude::*;
+use dioxus_i18n::t;
 
 /// Shared navbar component.
 #[component]
@@ -11,7 +13,7 @@ pub fn Navbar() -> Element {
                 div { class: "px-6 py-8",
                     // App Title
                     h1 { class: "text-2xl font-bold text-sky-700 mb-8",
-                        "ChronoCherish"
+                        {t!("app_title")}
                     }
 
                     // Navigation Menu
@@ -19,23 +21,28 @@ pub fn Navbar() -> Element {
                         Link {
                             class: "flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-sky-50 hover:text-sky-700 transition-colors duration-150",
                             to: Route::Home {},
-                            "Dashboard"
+                            {t!("nav_dashboard")}
                         }
                         Link {
                             class: "flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-sky-50 hover:text-sky-700 transition-colors duration-150",
                             to: Route::NewMilestone {},
-                            "New Milestone"
+                            {t!("nav_new_milestone")}
                         }
                         Link {
                             class: "flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-sky-50 hover:text-sky-700 transition-colors duration-150",
                             to: Route::MilestoneList {},
-                            "All Milestones"
+                            {t!("nav_all_milestones")}
                         }
                         Link {
                             class: "flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-sky-50 hover:text-sky-700 transition-colors duration-150",
                             to: Route::AnniversaryList {},
-                            "Anniversaries"
+                            {t!("nav_anniversaries")}
                         }
+                    }
+
+                    // Language Selector
+                    div { class: "mt-8 pt-4 border-t border-gray-200",
+                        LanguageSelector {}
                     }
                 }
             }

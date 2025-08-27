@@ -1,6 +1,7 @@
 use crate::models::anniversary::get_upcoming_anniversaries;
 use crate::models::AppState;
 use dioxus::prelude::*;
+use dioxus_i18n::t;
 
 #[component]
 pub fn AnniversaryList() -> Element {
@@ -14,10 +15,10 @@ pub fn AnniversaryList() -> Element {
             // Header
             div { class: "border-b border-gray-200 pb-6",
                 h1 { class: "text-3xl font-bold text-gray-900",
-                    "Upcoming Anniversaries"
+                    {t!("anniversaries_title")}
                 }
                 p { class: "mt-2 text-gray-600",
-                    "All anniversaries coming up in the next year"
+                    {t!("anniversaries_subtitle")}
                 }
             }
 
@@ -26,10 +27,10 @@ pub fn AnniversaryList() -> Element {
                 if upcoming_anniversaries.is_empty() {
                     div { class: "text-center py-12",
                         p { class: "text-gray-500 mb-4",
-                            "No upcoming anniversaries found"
+                            {t!("no_upcoming_anniversaries")}
                         }
                         p { class: "text-sm text-gray-400",
-                            "Create some recurring milestones to see anniversaries here"
+                            {t!("no_upcoming_anniversaries_desc")}
                         }
                     }
                 } else {
@@ -43,7 +44,7 @@ pub fn AnniversaryList() -> Element {
                                                 "{anniversary.milestone.title}"
                                             }
                                             span { class: "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800",
-                                                "{anniversary.years_passed} years"
+                                                {t!("years_passed", count: anniversary.years_passed)}
                                             }
                                         }
                                         if !anniversary.milestone.description.is_empty() {
@@ -54,7 +55,7 @@ pub fn AnniversaryList() -> Element {
                                         div { class: "grid grid-cols-2 gap-4 text-sm",
                                             div {
                                                 p { class: "text-gray-500",
-                                                    "Original Date"
+                                                    {t!("original_date")}
                                                 }
                                                 p { class: "font-medium text-gray-900",
                                                     "{anniversary.milestone.date}"
@@ -62,7 +63,7 @@ pub fn AnniversaryList() -> Element {
                                             }
                                             div {
                                                 p { class: "text-gray-500",
-                                                    "Next Anniversary"
+                                                    {t!("next_anniversary")}
                                                 }
                                                 p { class: "font-medium text-gray-900",
                                                     "{anniversary.next_anniversary}"
@@ -76,7 +77,7 @@ pub fn AnniversaryList() -> Element {
                                                 "{anniversary.days_until}"
                                             }
                                             p { class: "text-xs text-sky-600 font-medium",
-                                                "days remaining"
+                                                {t!("days_remaining")}
                                             }
                                         }
                                     }

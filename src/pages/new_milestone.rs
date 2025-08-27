@@ -4,6 +4,7 @@ use crate::persist::save_app_state;
 use crate::routes::Route;
 use crate::utils::now_local_date;
 use dioxus::prelude::*;
+use dioxus_i18n::t;
 
 #[component]
 pub fn NewMilestone() -> Element {
@@ -43,10 +44,10 @@ pub fn NewMilestone() -> Element {
             // Header
             div { class: "border-b border-gray-200 pb-6",
                 h1 { class: "text-3xl font-bold text-gray-900",
-                    "Create New Milestone"
+                    {t!("new_milestone_title")}
                 }
                 p { class: "mt-2 text-gray-600",
-                    "Add a new milestone to track important dates and anniversaries"
+                    {t!("new_milestone_subtitle")}
                 }
             }
 
@@ -55,7 +56,7 @@ pub fn NewMilestone() -> Element {
                 description: description_field,
                 is_recurring: is_recurring_field,
                 date: date_field,
-                submit_text: "Create Milestone".to_string(),
+                submit_text: t!("btn_create_milestone"),
                 on_submit: handle_submit
             }
         }

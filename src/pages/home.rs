@@ -1,5 +1,6 @@
 use crate::models::{get_upcoming_anniversaries, AppState};
 use dioxus::prelude::*;
+use dioxus_i18n::t;
 
 #[component]
 pub fn Home() -> Element {
@@ -18,10 +19,10 @@ pub fn Home() -> Element {
             // Header
             div { class: "border-b border-gray-200 pb-6",
                 h1 { class: "text-3xl font-bold text-gray-900",
-                    "Dashboard"
+                    {t!("dashboard_title")}
                 }
                 p { class: "mt-2 text-gray-600",
-                    "Track your important milestones and anniversaries"
+                    {t!("dashboard_subtitle")}
                 }
             }
 
@@ -32,7 +33,7 @@ pub fn Home() -> Element {
                     div { class: "flex items-center",
                         div { class: "flex-1",
                             p { class: "text-sm font-medium text-gray-600",
-                                "Total Milestones"
+                                {t!("stats_total_milestones")}
                             }
                             p { class: "text-2xl font-bold text-gray-900",
                                 "{milestones.len()}"
@@ -46,7 +47,7 @@ pub fn Home() -> Element {
                     div { class: "flex items-center",
                         div { class: "flex-1",
                             p { class: "text-sm font-medium text-gray-600",
-                                "Recurring"
+                                {t!("stats_recurring")}
                             }
                             p { class: "text-2xl font-bold text-sky-600",
                                 "{milestones.iter().filter(|m| m.is_recurring).count()}"
@@ -60,7 +61,7 @@ pub fn Home() -> Element {
                     div { class: "flex items-center",
                         div { class: "flex-1",
                             p { class: "text-sm font-medium text-gray-600",
-                                "Upcoming (30 days)"
+                                {t!("stats_upcoming")}
                             }
                             p { class: "text-2xl font-bold text-amber-600",
                                 "{upcoming_count}"
@@ -74,7 +75,7 @@ pub fn Home() -> Element {
             div { class: "bg-white rounded-lg border border-gray-200",
                 div { class: "px-6 py-4 border-b border-gray-200",
                     h2 { class: "text-lg font-semibold text-gray-900",
-                        "Upcoming Anniversaries"
+                        {t!("anniversaries_title")}
                     }
                 }
 
@@ -82,7 +83,7 @@ pub fn Home() -> Element {
                     if next_few.is_empty() {
                         div { class: "text-center py-12",
                             p { class: "text-gray-500",
-                                "No upcoming anniversaries in the next 30 days"
+                                {t!("no_upcoming_30_days")}
                             }
                         }
                     } else {
@@ -102,10 +103,10 @@ pub fn Home() -> Element {
                                         }
                                         div { class: "text-right ml-4",
                                             p { class: "text-sm font-medium text-sky-600",
-                                                "{anniversary.years_passed} years"
+                                                {t!("years_passed", count: anniversary.years_passed)}
                                             }
                                             p { class: "text-xs text-gray-500",
-                                                "{anniversary.days_until} days remaining"
+                                                "{anniversary.days_until} {t!(\"days_remaining\")}"
                                             }
                                         }
                                     }

@@ -1,5 +1,6 @@
 // use crate::components::calendar::CalendarDatePicker;
 use dioxus::prelude::*;
+use dioxus_i18n::t;
 use time::{macros::format_description, Date};
 
 #[component]
@@ -23,13 +24,13 @@ pub fn MilestoneForm(
                 div { class: "space-y-2",
                     label {
                         class: "block text-sm font-medium text-gray-700",
-                        "Title"
+                        {t!("field_title")}
                     }
                     input {
                         class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500",
                         value: "{title}",
                         oninput: move |e| title.set(e.value()),
-                        placeholder: "Enter milestone title"
+                        placeholder: "{t!(\"field_title_placeholder\")}"
                     }
                 }
 
@@ -37,13 +38,13 @@ pub fn MilestoneForm(
                 div { class: "space-y-2",
                     label {
                         class: "block text-sm font-medium text-gray-700",
-                        "Description"
+                        {t!("field_description")}
                     }
                     input {
                         class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500",
                         value: "{description}",
                         oninput: move |e| description.set(e.value()),
-                        placeholder: "Enter milestone description"
+                        placeholder: "{t!(\"field_description_placeholder\")}"
                     }
                 }
 
@@ -51,7 +52,7 @@ pub fn MilestoneForm(
                 div { class: "space-y-2",
                     label {
                         class: "block text-sm font-medium text-gray-700",
-                        "Date"
+                        {t!("field_date")}
                     }
                     input {
                         class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500",
@@ -78,7 +79,7 @@ pub fn MilestoneForm(
                     }
                     label {
                         class: "text-sm font-medium text-gray-700",
-                        "Recurring Anniversary"
+                        {t!("field_recurring")}
                     }
                 }
 
