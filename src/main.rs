@@ -1,3 +1,4 @@
+#![cfg_attr(feature = "bundle", windows_subsystem = "windows")]
 use dioxus::prelude::*;
 use dioxus_i18n::prelude::*;
 use models::AppState;

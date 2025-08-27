@@ -1,9 +1,13 @@
 [application]
+name = "ChronoCherish"
+default_platform = "desktop"
+asset_dir = "assets"
+out_dir = "dist"
 
 [web.app]
 
 # HTML title tag content
-title = "chrono-cherish"
+title = "ChronoCherish"
 
 # include `assets` in web platform
 [web.resource]
@@ -19,3 +23,9 @@ script = []
 # Javascript code file
 # serve: [dev-server] only
 script = []
+
+[bundle]
+identifier = "work.changsun.www"
+publisher = "@changsun20"
+icon = ["assets/icons/chrono-cherish-icon.ico"]
+resources = ["assets/css/tailwind.css"]
