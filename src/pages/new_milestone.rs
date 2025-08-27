@@ -14,6 +14,7 @@ pub fn NewMilestone() -> Element {
 
     let mut title_field = use_signal(|| "".to_string());
     let mut description_field = use_signal(|| "".to_string());
+    let mut is_recurring_field = use_signal(|| false);
 
     let mut date_field = use_signal(|| Some(time::UtcDateTime::now().date()));
     let mut show_calendar = use_signal(|| false);
@@ -28,7 +29,8 @@ pub fn NewMilestone() -> Element {
                         id: next_id(),
                         title: title_field(),
                         description: description_field(),
-                        date: selected_date
+                        date: selected_date,
+                        is_recurring: is_recurring_field(),
                     };
 
                     next_id.set(next_id() + 1);
@@ -52,6 +54,13 @@ pub fn NewMilestone() -> Element {
                 value: "{description_field}",
                 oninput: move |e| description_field.set(e.value()),
                 placeholder: "Enter milestone description"
+            }
+
+            label { "Is Recurring Anniversary:" }
+            input {
+                r#type: "checkbox",
+                checked: is_recurring_field(),
+                onchange: move |e| is_recurring_field.set(e.checked()),
             }
 
             label { "Date:" }

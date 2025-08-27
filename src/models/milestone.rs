@@ -7,4 +7,5 @@ pub struct Milestone {
     pub title: String,
     pub description: String,
     pub date: Date,
+    pub is_recurring: bool,
 }

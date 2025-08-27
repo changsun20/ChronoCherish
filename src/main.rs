@@ -10,7 +10,7 @@ mod pages;
 mod persist;
 mod routes;
 
-const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
+const TAILWIND_CSS: Asset = asset!("/assets/css/tailwind.css");
 
 fn main() {
     dioxus::launch(App);

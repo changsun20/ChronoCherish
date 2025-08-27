@@ -16,6 +16,7 @@ pub fn EditMilestone(id: u32) -> Element {
     if let Some(milestone) = milestone_opt {
         let mut title_field = use_signal(|| milestone.title.clone());
         let mut description_field = use_signal(|| milestone.description.clone());
+        let mut is_recurring_field = use_signal(|| milestone.is_recurring);
 
         let mut date_field = use_signal(|| Some(milestone.date.clone()));
         let mut show_calendar = use_signal(|| false);
@@ -30,7 +31,8 @@ pub fn EditMilestone(id: u32) -> Element {
                             id: milestone.id,
                             title: title_field(),
                             description: description_field(),
-                            date: selected_date
+                            date: selected_date,
+                            is_recurring: is_recurring_field(),
                         };
 
                         let mut milestones_mut = milestones;
@@ -56,6 +58,13 @@ pub fn EditMilestone(id: u32) -> Element {
                     value: "{description_field}",
                     oninput: move |e| description_field.set(e.value()),
                     placeholder: "Enter milestone description"
+                }
+
+                label { "Is Recurring Anniversary:" }
+                input {
+                    r#type: "checkbox",
+                    checked: is_recurring_field(),
+                    onchange: move |e| is_recurring_field.set(e.checked()),
                 }
 
                 label { "Date:" }
