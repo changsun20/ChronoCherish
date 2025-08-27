@@ -22,4 +22,8 @@ impl AppState {
             next_id: use_signal(|| data.next_id),
         }
     }
+
+    pub fn sort_milestones_by_date(mut self) {
+        self.milestones.write().sort_by(|a, b| b.date.cmp(&a.date));
+    }
 }

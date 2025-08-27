@@ -36,6 +36,7 @@ pub fn NewMilestone() -> Element {
                     next_id.set(next_id() + 1);
                     milestones.write().push(new_milestone);
 
+                    app_state.sort_milestones_by_date();
                     save_app_state(&app_state);
 
                     navigator.push(Route::MilestoneList {});
