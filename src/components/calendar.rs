@@ -4,14 +4,15 @@ use dioxus_primitives::calendar::{
     CalendarPreviousMonthButton, CalendarSelectMonth, CalendarSelectYear,
 };
 
-use time::{macros::date, Date, UtcDateTime};
+use crate::utils::now_local_date;
+use time::{macros::date, Date};
 
 #[component]
 pub fn CalendarDatePicker(
     selected_date: Signal<Option<Date>>,
     on_date_change: EventHandler<Option<Date>>,
 ) -> Element {
-    let mut view_date = use_signal(|| UtcDateTime::now().date());
+    let mut view_date = use_signal(|| now_local_date());
 
     rsx! {
         div {

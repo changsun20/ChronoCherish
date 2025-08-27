@@ -1,5 +1,6 @@
 use super::milestone::Milestone;
-use time::{Date, OffsetDateTime};
+use crate::utils::now_local_date;
+use time::Date;
 
 #[derive(Debug, Clone)]
 pub struct Anniversary {
@@ -10,7 +11,7 @@ pub struct Anniversary {
 }
 
 pub fn get_upcoming_anniversaries(milestones: &[Milestone], days_ahead: i64) -> Vec<Anniversary> {
-    let today = OffsetDateTime::now_utc().date();
+    let today = now_local_date();
     let mut anniversaries = Vec::<Anniversary>::new();
 
     for milestone in milestones.iter().filter(|m| m.is_recurring) {

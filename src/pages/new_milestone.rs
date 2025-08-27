@@ -2,6 +2,7 @@ use crate::components::calendar::CalendarDatePicker;
 use crate::models::{AppState, Milestone};
 use crate::persist::save_app_state;
 use crate::routes::Route;
+use crate::utils::now_local_date;
 use dioxus::prelude::*;
 
 #[component]
@@ -16,7 +17,7 @@ pub fn NewMilestone() -> Element {
     let mut description_field = use_signal(|| "".to_string());
     let mut is_recurring_field = use_signal(|| false);
 
-    let mut date_field = use_signal(|| Some(time::UtcDateTime::now().date()));
+    let mut date_field = use_signal(|| Some(now_local_date()));
     let mut show_calendar = use_signal(|| false);
 
     rsx! {

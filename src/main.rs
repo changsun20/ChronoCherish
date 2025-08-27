@@ -9,6 +9,7 @@ mod models;
 mod pages;
 mod persist;
 mod routes;
+mod utils;
 
 const TAILWIND_CSS: Asset = asset!("/assets/css/tailwind.css");
 
