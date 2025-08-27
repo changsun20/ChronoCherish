@@ -42,20 +42,37 @@ pub fn EditMilestone(id: u32) -> Element {
         };
 
         rsx!(
-            h2 { "Edit Milestone" }
+            div { class: "space-y-6",
+                // Header
+                div { class: "border-b border-gray-200 pb-6",
+                    h1 { class: "text-3xl font-bold text-gray-900",
+                        "Edit Milestone"
+                    }
+                    p { class: "mt-2 text-gray-600",
+                        "Update your milestone details"
+                    }
+                }
 
-            MilestoneForm {
-                title: title_field,
-                description: description_field,
-                is_recurring: is_recurring_field,
-                date: date_field,
-                submit_text: "Update Milestone".to_string(),
-                on_submit: handle_submit
+                MilestoneForm {
+                    title: title_field,
+                    description: description_field,
+                    is_recurring: is_recurring_field,
+                    date: date_field,
+                    submit_text: "Update Milestone".to_string(),
+                    on_submit: handle_submit
+                }
             }
         )
     } else {
         rsx!(
-            h1 { "Milestone Not Found" }
+            div { class: "text-center py-12",
+                h1 { class: "text-2xl font-bold text-gray-900 mb-4",
+                    "Milestone Not Found"
+                }
+                p { class: "text-gray-600",
+                    "The requested milestone could not be found."
+                }
+            }
         )
     }
 }

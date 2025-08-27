@@ -10,18 +10,80 @@ pub fn AnniversaryList() -> Element {
     let upcoming_anniversaries = get_upcoming_anniversaries(&milestones, 365);
 
     rsx! {
-        h1 { "Upcoming Anniversaries" }
+        div { class: "space-y-6",
+            // Header
+            div { class: "border-b border-gray-200 pb-6",
+                h1 { class: "text-3xl font-bold text-gray-900",
+                    "Upcoming Anniversaries"
+                }
+                p { class: "mt-2 text-gray-600",
+                    "All anniversaries coming up in the next year"
+                }
+            }
 
-        if upcoming_anniversaries.is_empty() {
-            p { "No upcoming anniversaries found." }
-        } else {
-            for anniversary in upcoming_anniversaries {
-                div {
-                    h3 { "{anniversary.milestone.title}" }
-                    p { "{anniversary.milestone.description}" }
-                    p { "Original Date: {anniversary.milestone.date}" }
-                    p { "{anniversary.years_passed} years - {anniversary.days_until} days remaining" }
-                    p { "Next Anniversary: {anniversary.next_anniversary}" }
+            // Anniversary List
+            div { class: "bg-white rounded-lg border border-gray-200",
+                if upcoming_anniversaries.is_empty() {
+                    div { class: "text-center py-12",
+                        p { class: "text-gray-500 mb-4",
+                            "No upcoming anniversaries found"
+                        }
+                        p { class: "text-sm text-gray-400",
+                            "Create some recurring milestones to see anniversaries here"
+                        }
+                    }
+                } else {
+                    div { class: "divide-y divide-gray-200",
+                        for anniversary in upcoming_anniversaries {
+                            div { class: "p-6 hover:bg-gray-50 transition-colors duration-150",
+                                div { class: "flex items-start justify-between",
+                                    div { class: "flex-1 min-w-0",
+                                        div { class: "flex items-center space-x-3 mb-2",
+                                            h3 { class: "text-lg font-medium text-gray-900",
+                                                "{anniversary.milestone.title}"
+                                            }
+                                            span { class: "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800",
+                                                "{anniversary.years_passed} years"
+                                            }
+                                        }
+                                        if !anniversary.milestone.description.is_empty() {
+                                            p { class: "text-gray-600 mb-3",
+                                                "{anniversary.milestone.description}"
+                                            }
+                                        }
+                                        div { class: "grid grid-cols-2 gap-4 text-sm",
+                                            div {
+                                                p { class: "text-gray-500",
+                                                    "Original Date"
+                                                }
+                                                p { class: "font-medium text-gray-900",
+                                                    "{anniversary.milestone.date}"
+                                                }
+                                            }
+                                            div {
+                                                p { class: "text-gray-500",
+                                                    "Next Anniversary"
+                                                }
+                                                p { class: "font-medium text-gray-900",
+                                                    "{anniversary.next_anniversary}"
+                                                }
+                                            }
+                                        }
+                                    }
+                                    div { class: "text-right ml-4",
+                                        div { class: "bg-sky-50 rounded-lg p-3 text-center",
+                                            p { class: "text-2xl font-bold text-sky-600",
+                                                "{anniversary.days_until}"
+                                            }
+                                            p { class: "text-xs text-sky-600 font-medium",
+                                                "days remaining"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

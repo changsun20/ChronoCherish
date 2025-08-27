@@ -39,15 +39,25 @@ pub fn NewMilestone() -> Element {
     };
 
     rsx! {
-        h2 { "Create New Milestone" }
+        div { class: "space-y-6",
+            // Header
+            div { class: "border-b border-gray-200 pb-6",
+                h1 { class: "text-3xl font-bold text-gray-900",
+                    "Create New Milestone"
+                }
+                p { class: "mt-2 text-gray-600",
+                    "Add a new milestone to track important dates and anniversaries"
+                }
+            }
 
-        MilestoneForm {
-            title: title_field,
-            description: description_field,
-            is_recurring: is_recurring_field,
-            date: date_field,
-            submit_text: "Create Milestone".to_string(),
-            on_submit: handle_submit
+            MilestoneForm {
+                title: title_field,
+                description: description_field,
+                is_recurring: is_recurring_field,
+                date: date_field,
+                submit_text: "Create Milestone".to_string(),
+                on_submit: handle_submit
+            }
         }
     }
 }
