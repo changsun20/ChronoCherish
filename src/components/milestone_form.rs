@@ -1,6 +1,6 @@
-use crate::components::calendar::CalendarDatePicker;
+// use crate::components::calendar::CalendarDatePicker;
 use dioxus::prelude::*;
-use time::Date;
+use time::{macros::format_description, Date};
 
 #[component]
 pub fn MilestoneForm(
@@ -11,8 +11,6 @@ pub fn MilestoneForm(
     submit_text: String,
     on_submit: EventHandler<()>,
 ) -> Element {
-    let mut show_calendar = use_signal(|| false);
-
     rsx! {
         form {
             onsubmit: move |_| {
@@ -41,21 +39,15 @@ pub fn MilestoneForm(
             }
 
             label { "Date:" }
-            p {
-                "Selected date: {date().map(|d| d.to_string()).unwrap_or_else(|| \"Not selected\".to_string())}"
-            }
-            button {
-                r#type: "button",
-                onclick: move |_| show_calendar.set(!show_calendar()),
-                if show_calendar() { "Hide Calendar" } else { "Select Date" }
-            }
-
-            if show_calendar() {
-                CalendarDatePicker {
-                    selected_date: date,
-                    on_date_change: move |new_date| {
-                        date.set(new_date);
-                        show_calendar.set(false);
+            input {
+                r#type: "date",
+                value: date().map(|d| d.to_string()).unwrap_or_default(),
+                oninput: move |e| {
+                    let date_str = e.value();
+                    // HTML date input uses ISO 8601 format (YYYY-MM-DD)
+                    let format = format_description!("[year]-[month]-[day]");
+                    if let Ok(parsed_date) = Date::parse(&date_str, &format) {
+                        date.set(Some(parsed_date));
                     }
                 }
             }
