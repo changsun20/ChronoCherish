@@ -1,5 +1,7 @@
 #![cfg_attr(feature = "bundle", windows_subsystem = "windows")]
 use dioxus::prelude::*;
+use dioxus_desktop::tao::dpi::{LogicalPosition, LogicalSize};
+use dioxus_desktop::WindowBuilder;
 use dioxus_i18n::prelude::*;
 use models::AppState;
 use routes::Route;
@@ -17,7 +19,18 @@ mod utils;
 const TAILWIND_CSS: Asset = asset!("/assets/css/tailwind.css");
 
 fn main() {
-    dioxus::launch(App);
+    let window = WindowBuilder::new()
+        .with_title("ChronoCherish")
+        .with_inner_size(LogicalSize::new(1280, 720))
+        .with_position(LogicalPosition::new(100, 50))
+        .with_maximized(false);
+
+    let cfg = dioxus_desktop::Config::new()
+        .with_disable_context_menu(true)
+        .with_menu(None)
+        .with_window(window);
+
+    dioxus::LaunchBuilder::desktop().with_cfg(cfg).launch(App);
 }
 
 #[component]
