@@ -48,7 +48,7 @@ pub fn LanguageSelector() -> Element {
             // Dropdown menu
             if show_dropdown() {
                 div {
-                    class: "absolute left-0 mt-2 w-full bg-white rounded-lg shadow-lg border border-gray-200 z-50 transition-all duration-150",
+                    class: "absolute left-0 bottom-full mb-2 w-full bg-white rounded-lg shadow-lg border border-gray-200 z-50 transition-all duration-150",
                     div { class: "py-2",
                         button {
                             class: "w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-sky-50 hover:text-sky-700 transition-colors duration-150",

@@ -9,8 +9,8 @@ pub fn Navbar() -> Element {
     rsx! {
         div { class: "min-h-screen bg-gray-50 flex",
             // Sidebar Navigation
-            nav { class: "w-64 bg-white border-r border-gray-200 fixed h-full",
-                div { class: "px-6 py-8",
+            nav { class: "w-64 bg-white border-r border-gray-200 fixed h-full flex flex-col",
+                div { class: "px-6 py-8 flex-1",
                     // App Title
                     h1 { class: "text-2xl font-bold text-sky-700 mb-8",
                         {t!("app_title")}
@@ -39,9 +39,11 @@ pub fn Navbar() -> Element {
                             {t!("nav_anniversaries")}
                         }
                     }
+                }
 
-                    // Language Selector
-                    div { class: "mt-8 pt-4 border-t border-gray-200",
+                // Language Selector at bottom
+                div { class: "px-6 pb-8 border-t border-gray-200",
+                    div { class: "pt-4",
                         LanguageSelector {}
                     }
                 }

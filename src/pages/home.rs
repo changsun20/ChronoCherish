@@ -30,12 +30,12 @@ pub fn Home() -> Element {
             div { class: "grid grid-cols-3 gap-6",
                 // Total Milestones
                 div { class: "bg-white rounded-lg border border-gray-200 p-6",
-                    div { class: "flex items-center",
+                    div { class: "flex items-start",
                         div { class: "flex-1",
                             p { class: "text-sm font-medium text-gray-600",
                                 {t!("stats_total_milestones")}
                             }
-                            p { class: "text-2xl font-bold text-gray-900",
+                            p { class: "text-2xl font-bold text-gray-900 mt-2",
                                 "{milestones.len()}"
                             }
                         }
@@ -44,12 +44,12 @@ pub fn Home() -> Element {
 
                 // Recurring Anniversaries
                 div { class: "bg-white rounded-lg border border-gray-200 p-6",
-                    div { class: "flex items-center",
+                    div { class: "flex items-start",
                         div { class: "flex-1",
                             p { class: "text-sm font-medium text-gray-600",
                                 {t!("stats_recurring")}
                             }
-                            p { class: "text-2xl font-bold text-sky-600",
+                            p { class: "text-2xl font-bold text-sky-600 mt-2",
                                 "{milestones.iter().filter(|m| m.is_recurring).count()}"
                             }
                         }
@@ -58,12 +58,12 @@ pub fn Home() -> Element {
 
                 // Upcoming (30 days)
                 div { class: "bg-white rounded-lg border border-gray-200 p-6",
-                    div { class: "flex items-center",
+                    div { class: "flex items-start",
                         div { class: "flex-1",
                             p { class: "text-sm font-medium text-gray-600",
                                 {t!("stats_upcoming")}
                             }
-                            p { class: "text-2xl font-bold text-amber-600",
+                            p { class: "text-2xl font-bold text-amber-600 mt-2",
                                 "{upcoming_count}"
                             }
                         }
