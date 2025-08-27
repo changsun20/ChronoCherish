@@ -1,5 +1,5 @@
 use crate::components::Navbar;
-use crate::pages::{EditMilestone, Home, MilestoneList, NewMilestone};
+use crate::pages::{AnniversaryList, EditMilestone, Home, MilestoneList, NewMilestone};
 use dioxus::prelude::*;
 
 #[derive(Debug, Clone, Routable, PartialEq)]
@@ -9,12 +9,15 @@ pub enum Route {
     #[route("/")]
     Home {},
 
-    #[route("/new-milestone")]
+    #[route("/new_milestone")]
     NewMilestone {},
 
-    #[route("/milestone-list")]
+    #[route("/milestone_list")]
     MilestoneList {},
 
     #[route("/milestone/:id")]
     EditMilestone { id: u32 },
+
+    #[route("/anniversary_list")]
+    AnniversaryList {},
 }

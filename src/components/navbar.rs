@@ -26,6 +26,13 @@ pub fn Navbar() -> Element {
             }
         }
 
+        div {
+            Link {
+                to: Route::AnniversaryList {},
+                "Anniversary List"
+            }
+        }
+
         Outlet::<Route> {}
     }
 }
