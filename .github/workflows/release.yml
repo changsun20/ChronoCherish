@@ -1,0 +1,100 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - "v*"
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          targets: wasm32-unknown-unknown
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Install cargo-binstall
+        run: |
+          $url = "https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-x86_64-pc-windows-msvc.zip"
+          Invoke-WebRequest -Uri $url -OutFile "cargo-binstall.zip"
+          Expand-Archive -Path "cargo-binstall.zip" -DestinationPath "."
+          Move-Item -Path "cargo-binstall.exe" -Destination "$env:USERPROFILE\.cargo\bin\"
+
+      - name: Install Dioxus CLI
+        run: cargo binstall dioxus-cli --no-confirm
+
+      - name: Build release
+        run: dx bundle --platform desktop --package-types "nsis" --release -- --features bundle
+
+      - name: Get tag name
+        id: tag
+        run: |
+          $tag = $env:GITHUB_REF -replace 'refs/tags/', ''
+          echo "name=$tag" >> $env:GITHUB_OUTPUT
+
+      - name: Find installer file
+        id: installer
+        run: |
+          $installer = Get-ChildItem -Path "target/release/bundle/nsis" -Filter "*.exe" | Select-Object -First 1
+          if ($installer) {
+            echo "path=$($installer.FullName)" >> $env:GITHUB_OUTPUT
+            echo "name=$($installer.Name)" >> $env:GITHUB_OUTPUT
+          } else {
+            Write-Error "No installer found"
+            exit 1
+          }
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.tag.outputs.name }}
+          release_name: ChronoCherish ${{ steps.tag.outputs.name }}
+          body: |
+            ## ChronoCherish ${{ steps.tag.outputs.name }}
+
+            ### Downloads
+            - Windows Installer: ${{ steps.installer.outputs.name }}
+
+            ### Installation
+            1. Download the Windows installer
+            2. Double-click to run the setup program
+            3. Follow the installation wizard to complete the setup
+
+            ### Changelog
+            Please check the commit history for detailed changes in this release.
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.installer.outputs.path }}
+          asset_name: ${{ steps.installer.outputs.name }}
+          asset_content_type: application/octet-stream
+
