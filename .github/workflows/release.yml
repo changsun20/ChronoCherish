@@ -69,24 +69,13 @@ jobs:
           }
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.name }}
           name: ChronoCherish ${{ steps.tag.outputs.name }}
-          body: |
-            ## ChronoCherish ${{ steps.tag.outputs.name }}
-
-            ### Downloads
-            - Windows Installer: ${{ steps.installer.outputs.name }}
-
-            ### Installation Instructions
-            1. Download the Windows installer
-            2. Run the installer executable
-            3. Follow the installation wizard prompts
-
-            ### Changelog
-            Please check the commit history for detailed changes in this release.
-          files: ${{ steps.installer.outputs.path }}
+          generate_release_notes: true
+          files: |
+            dist/*.exe
           draft: false
           prerelease: false
         env:
