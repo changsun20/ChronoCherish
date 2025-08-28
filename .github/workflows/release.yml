@@ -55,7 +55,7 @@ jobs:
       - name: Find installer file
         id: installer
         run: |
-          $installer = Get-ChildItem -Path "target/release/bundle/nsis" -Filter "*.exe" | Select-Object -First 1
+          $installer = Get-ChildItem -Path "dist" -Filter "*.exe" | Select-Object -First 1
           if ($installer) {
             echo "path=$($installer.FullName)" >> $env:GITHUB_OUTPUT
             echo "name=$($installer.Name)" >> $env:GITHUB_OUTPUT
@@ -78,10 +78,10 @@ jobs:
             ### Downloads
             - Windows Installer: ${{ steps.installer.outputs.name }}
 
-            ### Installation
+            ### Installation Instructions
             1. Download the Windows installer
-            2. Double-click to run the setup program
-            3. Follow the installation wizard to complete the setup
+            2. Run the installer executable
+            3. Follow the installation wizard prompts
 
             ### Changelog
             Please check the commit history for detailed changes in this release.
