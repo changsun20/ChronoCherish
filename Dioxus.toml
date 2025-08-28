@@ -27,5 +27,17 @@ script = []
 [bundle]
 identifier = "work.changsun.www"
 publisher = "@changsun20"
-icon = ["assets/icons/chrono-cherish-icon.ico"]
-resources = ["assets/css/tailwind.css"]
+icon = ["assets/icons/icon.ico"]
+resources = ["./assets"]
+
+[bundle.windows]
+tsp = false
+webview_install_mode = "Skip"
+allow_downgrades = true
+icon_path = "assets/icons/icon.ico"
+
+[bundle.windows.nsis]
+installer_icon = "assets/icons/icon.ico"
+languages = ["SimpChinese", "English"]
+install_mode = "CurrentUser"
+display_language_selector = true
