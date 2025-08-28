@@ -46,11 +46,22 @@ fn App() -> Element {
     let app_state_data = AppStateData {
         milestones: data.0,
         next_id: data.1,
+        language: data.2,
     };
 
     let app_state = AppState::from_data(app_state_data);
 
     use_context_provider(|| app_state);
+
+    let app_state = use_context::<AppState>();
+    use_effect(move || {
+        let lang_id = app_state
+            .language
+            .read()
+            .parse()
+            .unwrap_or_else(|_| langid!("en-US"));
+        i18n().set_language(lang_id);
+    });
 
     rsx! {
         document::Link { rel: "stylesheet", href: TAILWIND_CSS }

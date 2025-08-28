@@ -6,6 +6,7 @@ use dioxus::prelude::*;
 pub struct AppState {
     pub milestones: Signal<Vec<Milestone>>,
     pub next_id: Signal<u32>,
+    pub language: Signal<String>,
 }
 
 impl AppState {
@@ -13,6 +14,7 @@ impl AppState {
         AppStateData {
             milestones: self.milestones.read().clone(),
             next_id: self.next_id.read().clone(),
+            language: self.language.read().clone(),
         }
     }
 
@@ -20,6 +22,7 @@ impl AppState {
         Self {
             milestones: use_signal(|| data.milestones),
             next_id: use_signal(|| data.next_id),
+            language: use_signal(|| data.language),
         }
     }
 

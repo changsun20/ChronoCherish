@@ -2,18 +2,27 @@ use dioxus::prelude::*;
 use dioxus_i18n::{prelude::*, t};
 use unic_langid::langid;
 
+use crate::{models::AppState, persist::save_app_state};
+
 #[component]
 pub fn LanguageSelector() -> Element {
     let mut i18n = i18n();
     let mut show_dropdown = use_signal(|| false);
 
+    let app_state = use_context::<AppState>();
+    let mut language_signal = app_state.language;
+
     let change_to_english = move |_| {
         i18n.set_language(langid!("en-US"));
         show_dropdown.set(false);
+        language_signal.set("en-US".to_string());
+        save_app_state(&app_state);
     };
     let change_to_chinese = move |_| {
         i18n.set_language(langid!("zh-CN"));
         show_dropdown.set(false);
+        language_signal.set("zh-CN".to_string());
+        save_app_state(&app_state);
     };
 
     rsx! {
