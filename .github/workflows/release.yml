@@ -5,6 +5,10 @@ on:
     tags:
       - "v*"
 
+permissions:
+  contents: write
+  packages: write
+
 env:
   CARGO_TERM_COLOR: always
 
@@ -65,13 +69,10 @@ jobs:
           }
 
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.tag.outputs.name }}
-          release_name: ChronoCherish ${{ steps.tag.outputs.name }}
+          name: ChronoCherish ${{ steps.tag.outputs.name }}
           body: |
             ## ChronoCherish ${{ steps.tag.outputs.name }}
 
@@ -85,16 +86,9 @@ jobs:
 
             ### Changelog
             Please check the commit history for detailed changes in this release.
+          files: ${{ steps.installer.outputs.path }}
           draft: false
           prerelease: false
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.installer.outputs.path }}
-          asset_name: ${{ steps.installer.outputs.name }}
-          asset_content_type: application/octet-stream
 
